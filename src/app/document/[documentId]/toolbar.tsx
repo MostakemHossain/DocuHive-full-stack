@@ -23,6 +23,7 @@ import {
   Underline,
   Undo2Icon,
 } from "lucide-react";
+import { SketchPicker, type ColorResult } from "react-color";
 const HeadingLevelButton = () => {
   const { editor } = useEditorStore();
   const heading = [
@@ -204,6 +205,31 @@ const FontFamilyButton = () => {
   );
 };
 
+const TextColorButton = () => {
+  const { editor } = useEditorStore();
+  const value = editor?.getAttributes("textStyle").color || "#000000";
+  const onChange = (color: ColorResult) => {
+    editor?.chain().focus().setColor(color.hex).run();
+  };
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          className={cn(
+            "text-sm h-7 min-w-7 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-200/80 shrink-0 px-1.5 "
+          )}
+        >
+          <span className="text-xs">A </span>
+          <div className="h-0.5 w-full" style={{ backgroundColor: value }} />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="p-2.5">
+        <SketchPicker onChange={onChange} color={value} />
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
 interface ToolbarButtonProps {
   icon: LucideIcon;
   isActive?: boolean;
@@ -322,7 +348,8 @@ export const Toolbar = () => {
       {sections[1].map((item) => (
         <ToolBarButton key={item.label} {...item} />
       ))}
-      {/* Todo Text color  */}
+      <TextColorButton></TextColorButton>
+
       {/* Todo Highlight color  */}
       <Separator orientation="vertical" className="h-6 bg-neutral-300" />
       {/* Todo Link  */}
