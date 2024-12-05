@@ -12,6 +12,7 @@ import { type Level } from "@tiptap/extension-heading";
 import {
   BoldIcon,
   ChevronDownIcon,
+  HighlighterIcon,
   ItalicIcon,
   ListTodoIcon,
   LucideIcon,
@@ -23,7 +24,7 @@ import {
   Underline,
   Undo2Icon,
 } from "lucide-react";
-import { SketchPicker, type ColorResult } from "react-color";
+import { CirclePicker, SketchPicker, type ColorResult } from "react-color";
 const HeadingLevelButton = () => {
   const { editor } = useEditorStore();
   const heading = [
@@ -229,6 +230,47 @@ const TextColorButton = () => {
     </DropdownMenu>
   );
 };
+const HighlightColorButton = () => {
+  const { editor } = useEditorStore();
+  const value = editor?.getAttributes("highlight").color || "#ffffff";
+  const onChange = (color: ColorResult) => {
+    editor?.chain().focus().setHighlight({ color: color.hex }).run();
+  };
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <HighlighterIcon className="size-4" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="p-2.5">
+        <SketchPicker color={value} onChange={onChange} />
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+const TextColorButton2 = () => {
+  const { editor } = useEditorStore();
+  const value = editor?.getAttributes("textStyle").color || "#000000";
+  const onChange = (color: ColorResult) => {
+    editor?.chain().focus().setColor(color.hex).run();
+  };
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          className={cn(
+            "text-sm h-7 min-w-7 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-200/80 shrink-0 px-1.5 "
+          )}
+        >
+          <span className="text-xs">B</span>
+          <div className="h-0.5 w-full" style={{ backgroundColor: value }} />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="p-2.5">
+        <CirclePicker onChange={onChange} color={value} />
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
 interface ToolbarButtonProps {
   icon: LucideIcon;
@@ -349,8 +391,8 @@ export const Toolbar = () => {
         <ToolBarButton key={item.label} {...item} />
       ))}
       <TextColorButton></TextColorButton>
-
-      {/* Todo Highlight color  */}
+      <TextColorButton2></TextColorButton2>
+      <HighlightColorButton />
       <Separator orientation="vertical" className="h-6 bg-neutral-300" />
       {/* Todo Link  */}
       {/* Todo Image */}
