@@ -1,8 +1,16 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -15,6 +23,7 @@ import {
   BoldIcon,
   ChevronDownIcon,
   HighlighterIcon,
+  ImageIcon,
   ItalicIcon,
   Link2Icon,
   ListTodoIcon,
@@ -23,9 +32,11 @@ import {
   PrinterIcon,
   Redo2Icon,
   RemoveFormattingIcon,
+  SearchIcon,
   SpellCheckIcon,
   Underline,
   Undo2Icon,
+  UploadIcon,
 } from "lucide-react";
 import { useState } from "react";
 import { CirclePicker, SketchPicker, type ColorResult } from "react-color";
@@ -116,6 +127,77 @@ const HeadingLevelButton = () => {
   );
 };
 
+const ImageButton = () => {
+  const { editor } = useEditorStore();
+  const [imageUrl, setImageUrl] = useState("");
+  const [isDialougeOpen, setIsDialougeOpen] = useState(false);
+  const onChange = (src: string) => {
+    editor?.chain().focus().setImage({ src }).run();
+  };
+
+  const onUpload = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        onChange(URL.createObjectURL(file));
+        onChange(imageUrl);
+      }
+    };
+    input.click();
+  };
+
+  const imageUrlSubmit = () => {
+    if (imageUrl) {
+      onChange(imageUrl);
+      setImageUrl("");
+      setIsDialougeOpen(false);
+    }
+  };
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <ImageIcon className="size-4 mr-2" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem onClick={onUpload}>
+            <UploadIcon className="size-4 mr-2" />
+            Upload
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setIsDialougeOpen(true)}>
+            <SearchIcon className="size-4 mr-2" />
+            Paste your Image Url
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Dialog open={isDialougeOpen} onOpenChange={setIsDialougeOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Paste your Image Url</DialogTitle>
+          </DialogHeader>
+          <Input
+            placeholder="Insert image url"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                imageUrlSubmit();
+              }
+            }}
+          />
+          <DialogFooter onClick={imageUrlSubmit}>
+            <Button>Insert</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+};
+
 const LinkButton = () => {
   const { editor } = useEditorStore();
   const [value, setValue] = useState(" ");
@@ -124,11 +206,13 @@ const LinkButton = () => {
     setValue("");
   };
   return (
-    <DropdownMenu onOpenChange={(open)=>{
-      if(open){
-        setValue(editor?.getAttributes("link").href || "");
-      }
-    }}>
+    <DropdownMenu
+      onOpenChange={(open) => {
+        if (open) {
+          setValue(editor?.getAttributes("link").href || "");
+        }
+      }}
+    >
       <DropdownMenuTrigger asChild>
         <Link2Icon className="size-4" />
       </DropdownMenuTrigger>
@@ -427,7 +511,7 @@ export const Toolbar = () => {
       <HighlightColorButton />
       <Separator orientation="vertical" className="h-6 bg-neutral-300" />
       <LinkButton />
-      {/* Todo Image */}
+      <ImageButton />
       {/* Todo Align */}
       {/* Todo Line height */}
       {/* Todo Line List */}
