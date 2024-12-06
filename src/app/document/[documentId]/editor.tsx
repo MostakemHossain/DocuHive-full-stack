@@ -1,6 +1,7 @@
 "use client";
 
 import { useEditorStore } from "@/store/use-editor-store";
+import Link from '@tiptap/extension-link'
 import { Color } from "@tiptap/extension-color";
 import FontFamily from "@tiptap/extension-font-family";
 import Highlight from "@tiptap/extension-highlight";
@@ -73,6 +74,11 @@ export const Editor = () => {
         multicolor: true,
       }),
       Color,
+      Link.configure({
+        openOnClick: false,
+        autolink: true,
+        defaultProtocol: 'https',
+      })
     ],
     content: `
         <table>

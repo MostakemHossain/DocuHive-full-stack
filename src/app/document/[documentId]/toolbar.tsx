@@ -1,9 +1,11 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/use-editor-store";
@@ -14,6 +16,7 @@ import {
   ChevronDownIcon,
   HighlighterIcon,
   ItalicIcon,
+  Link2Icon,
   ListTodoIcon,
   LucideIcon,
   MessageSquarePlusIcon,
@@ -24,6 +27,7 @@ import {
   Underline,
   Undo2Icon,
 } from "lucide-react";
+import { useState } from "react";
 import { CirclePicker, SketchPicker, type ColorResult } from "react-color";
 const HeadingLevelButton = () => {
   const { editor } = useEditorStore();
@@ -107,6 +111,34 @@ const HeadingLevelButton = () => {
             {level}
           </button>
         ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
+const LinkButton = () => {
+  const { editor } = useEditorStore();
+  const [value, setValue] = useState(" ");
+  const onChange = (href: string) => {
+    editor?.chain().focus().extendMarkRange("link").setLink({ href }).run();
+    setValue("");
+  };
+  return (
+    <DropdownMenu onOpenChange={(open)=>{
+      if(open){
+        setValue(editor?.getAttributes("link").href || "");
+      }
+    }}>
+      <DropdownMenuTrigger asChild>
+        <Link2Icon className="size-4" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="p-2.5 flex items-center gap-x-2">
+        <Input
+          placeholder="https://example.com "
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+        />
+        <Button onClick={() => onChange(value)}>Apply</Button>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -394,7 +426,7 @@ export const Toolbar = () => {
       <TextColorButton2></TextColorButton2>
       <HighlightColorButton />
       <Separator orientation="vertical" className="h-6 bg-neutral-300" />
-      {/* Todo Link  */}
+      <LinkButton />
       {/* Todo Image */}
       {/* Todo Align */}
       {/* Todo Line height */}
