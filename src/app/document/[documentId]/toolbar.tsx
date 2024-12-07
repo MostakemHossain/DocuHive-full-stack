@@ -1,4 +1,5 @@
 "use client";
+import ListButton from "@/app/components/ListButton";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -374,7 +375,7 @@ const AlignButton = () => {
               editor?.isActive({ TextAlign: value }) && "bg-blue-200/80"
             )}
           >
-            <Icon  className="size-4"/>
+            <Icon className="size-4" />
             <span className="text-sm">{label}</span>
           </button>
         ))}
@@ -550,7 +551,7 @@ export const Toolbar = () => {
       <ImageButton />
       <AlignButton />
       {/* Todo Line height */}
-      {/* Todo Line List */}
+      <ListButton />
       <Separator orientation="vertical" className="h-6 bg-neutral-300" />
       {sections[2].map((item) => (
         <ToolBarButton key={item.label} {...item} />
