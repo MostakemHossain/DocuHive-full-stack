@@ -1,6 +1,7 @@
 "use client";
 
 import { useEditorStore } from "@/store/use-editor-store";
+import TextAlign from '@tiptap/extension-text-align'
 import Link from '@tiptap/extension-link'
 import { Color } from "@tiptap/extension-color";
 import FontFamily from "@tiptap/extension-font-family";
@@ -70,6 +71,9 @@ export const Editor = () => {
       Underline,
       FontFamily,
       TextStyle,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
       Highlight.configure({
         multicolor: true,
       }),
